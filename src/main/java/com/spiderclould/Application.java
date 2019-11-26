@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
 /**
- * 
+ * test
  * @author David Wang
  * 2019-11-26
  */
