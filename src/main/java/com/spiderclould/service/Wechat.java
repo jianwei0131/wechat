@@ -48,6 +48,21 @@ public class Wechat {
     
     private ConfigEntity config;
     
+    private volatile static Wechat WECHAT;
+    
+    public static void createInstance(String path) {
+    	if(WECHAT == null) {
+    		synchronized (Wechat.class) {
+				if(WECHAT == null) {
+					WECHAT = new Wechat(path);
+				}
+			}
+    	}
+    }
+    
+    public static Wechat getInstance() {
+    	return WECHAT;
+    }
 
     /**
      * 根据 appid 和 appsecret 创建API的构造函数
@@ -70,7 +85,7 @@ public class Wechat {
      * @param {String} appid 在公众平台上申请得到的appid
      * @param {String} appsecret 在公众平台上申请得到的app secret
      */
-    public Wechat(String confpath){
+    private Wechat(String confpath){
         this(confpath, new TokenStorageResolver() {
             @Override
             public AccessToken getToken() {
@@ -107,7 +122,7 @@ public class Wechat {
      * @param {String} appsecret 在公众平台上申请得到的app secret
      * @param {TokenStorageResolver} tokenStorageResolver 可选的。获取全局token对象的方法，多进程模式部署时需在意
      */
-    public Wechat(String confpath, TokenStorageResolver tokenStorageResolver){
+    private Wechat(String confpath, TokenStorageResolver tokenStorageResolver){
     	config = new ConfigEntity(confpath);
         this.appid = config.getAppid();
         this.appsecret = config.getAppsecret();
