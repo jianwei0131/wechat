@@ -4,6 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
+/**
+ * 
+ * @author David Wang
+ * 2019-11-26
+ */
 @SpringBootApplication
 @ServletComponentScan
 public class Application {
