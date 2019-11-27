@@ -20,10 +20,12 @@ public class WxApi {
 	@Value("${wechat.conf.path}")
 	private String wechatConfPath;
 	
+	private Wechat wechat = Wechat.getInstance();
+	
 	@PostMapping("/message")
 	public Result<Object> message(@RequestBody Map<String, Object> params) {
 		logger.info("Received parameters {}", params);
-//		Wechat.getInstance().transferMessage(deviceType, deviceId, openid, content);
+		Wechat.getInstance().getAutoreply();
 		return new Result(params);
 	}
 	

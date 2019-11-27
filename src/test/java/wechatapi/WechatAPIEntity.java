@@ -8,8 +8,8 @@ public class WechatAPIEntity {
 
     private static String filepath = "F:\\workspace\\conf.properties";
     static {
-
-        wechatAPI = new Wechat(filepath);
+    	Wechat.createInstance(filepath);
+        wechatAPI = Wechat.getInstance();
 
     }
 

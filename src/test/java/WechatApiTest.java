@@ -10,8 +10,8 @@ public class WechatApiTest {
 	private static String filepath = "F:\\workspace\\conf.properties";
     @Test
     public void rawTest(){
-
-        Wechat wechatAPI = new Wechat(filepath);
+    	Wechat.createInstance(filepath);
+        Wechat wechatAPI = Wechat.getInstance();
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("aw","");
