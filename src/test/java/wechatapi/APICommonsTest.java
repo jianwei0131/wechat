@@ -59,7 +59,7 @@ public class APICommonsTest {
 
     @Test
     public void uploadPicture(){
-    	String picPath  = "C:\\Users\\Administrator\\Pictures\\1.png";
+    	String picPath  = "C:\\Users\\user\\Pictures\\pig.jpg";
         JsonObject ret = wechatAPI.uploadPicture(picPath);
 
         System.out.println(ret);

@@ -6,7 +6,7 @@ public class WechatAPIEntity {
 
     private static Wechat wechatAPI = null;
 
-    private static String filepath = "F:\\workspace\\conf.properties";
+    private static String filepath = "d:\\workspace\\conf.properties";
     static {
     	Wechat.createInstance(filepath);
         wechatAPI = Wechat.getInstance();
