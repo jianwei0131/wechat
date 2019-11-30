@@ -1,5 +1,6 @@
 package com.spiderclould.api;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,26 +31,59 @@ public class WxApi {
 	
 	private Wechat wechat = Wechat.getInstance();
 	
+//	@RequestMapping("/message")
+//	public Result<Object> message(@RequestParam(required = false) Map<String, Object> formParams, @RequestBody(required = false) Map<String, Object> bodyParams, HttpServletRequest request, HttpServletResponse response) throws IOException {
+//		Map<String, Object> params = new TreeMap<String, Object>();
+//		if(formParams != null && !formParams.isEmpty()) {
+//			params.putAll(formParams);
+//		}
+//		if(bodyParams != null && !bodyParams.isEmpty()) {
+//			params.putAll(bodyParams);
+//		}
+//		logger.info("Received parameters {}", params);
+//		String echostr = (String)params.get("echostr");
+//		String nonce = (String)params.get("nonce");
+//		String signature = (String)params.get("signature");
+//		String timestamp = (String)params.get("timestamp");
+//		if(StringUtils.isNotBlank(echostr)) {
+//			ResponseUtil.printStringToResponse(echostr, response);
+//			return null;
+//		}
+//		wechat.getAutoreply();
+//		return new Result<>("success");
+//	}
+	
 	@RequestMapping("/message")
-	public Result<Object> message(@RequestParam(required = false) Map<String, Object> formParams, @RequestBody(required = false) Map<String, Object> bodyParams, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void message( HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Map<String, Object> params = new TreeMap<String, Object>();
+		Map<String, String[]> formParams = request.getParameterMap();
 		if(formParams != null && !formParams.isEmpty()) {
-			params.putAll(formParams);
+			formParams.forEach((k,v) -> params.put(k, v[0]));
+			logger.info("Received parameters {}", params);
+			
+			String signature = (String)params.get("signature");
+			String timestamp = (String)params.get("timestamp");
+			String nonce = (String)params.get("nonce");
+			String openid = (String)params.get("openid");
+			
+			
+			
+			String echostr = (String)params.get("echostr");
+			if(StringUtils.isNotBlank(echostr)) {
+				ResponseUtil.printStringToResponse(echostr, response);
+				return ;
+			}
 		}
-		if(bodyParams != null && !bodyParams.isEmpty()) {
-			params.putAll(bodyParams);
+		
+		if(request.getReader().ready()){
+			try(BufferedReader reader = request.getReader();){
+				reader.lines().forEach(str -> System.out.println(str));
+				
+			}
 		}
-		logger.info("Received parameters {}", params);
-		String echostr = (String)params.get("echostr");
-		String nonce = (String)params.get("nonce");
-		String signature = (String)params.get("signature");
-		String timestamp = (String)params.get("timestamp");
-		if(StringUtils.isNotBlank(echostr)) {
-			ResponseUtil.printStringToResponse(echostr, response);
-			return null;
-		}
-		wechat.getAutoreply();
-		return new Result<>("success");
+		
+//		wechat.getAutoreply();
+		ResponseUtil.printStringToResponse("success", response);
 	}
 	
 
