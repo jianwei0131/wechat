@@ -1,5 +1,7 @@
 package com.spiderclould.holder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +17,7 @@ import com.spiderclould.service.Wechat;
  */
 @Service
 public class WebContextHolder implements ApplicationContextAware  {
-	
+	private final static Logger logger = LoggerFactory.getLogger(WebContextHolder.class);
 	private static ApplicationContext applicationContext;
 	private static boolean isReady = false;
 
@@ -42,6 +44,8 @@ public class WebContextHolder implements ApplicationContextAware  {
 		applicationContext = arg0;
 		isReady = true;
 		Wechat.createInstance(wechatConfPath);
+		logger.info("Application was initialized. wechatConfPath={}", wechatConfPath);
+		
 	}
 	
 	public static boolean isReady() {

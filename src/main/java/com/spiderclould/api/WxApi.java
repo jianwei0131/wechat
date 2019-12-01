@@ -1,7 +1,8 @@
 package com.spiderclould.api;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,79 +13,70 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spiderclould.entity.Result;
+import com.spiderclould.entity.Message;
 import com.spiderclould.service.Wechat;
 import com.spiderclould.util.ResponseUtil;
 
 @RestController
 public class WxApi {
-	
+
 	private final static Logger logger = LoggerFactory.getLogger(WxApi.class);
-	
+
 	@Value("${wechat.conf.path}")
 	private String wechatConfPath;
-	
-	private Wechat wechat = Wechat.getInstance();
-	
-//	@RequestMapping("/message")
-//	public Result<Object> message(@RequestParam(required = false) Map<String, Object> formParams, @RequestBody(required = false) Map<String, Object> bodyParams, HttpServletRequest request, HttpServletResponse response) throws IOException {
-//		Map<String, Object> params = new TreeMap<String, Object>();
-//		if(formParams != null && !formParams.isEmpty()) {
-//			params.putAll(formParams);
-//		}
-//		if(bodyParams != null && !bodyParams.isEmpty()) {
-//			params.putAll(bodyParams);
-//		}
-//		logger.info("Received parameters {}", params);
-//		String echostr = (String)params.get("echostr");
-//		String nonce = (String)params.get("nonce");
-//		String signature = (String)params.get("signature");
-//		String timestamp = (String)params.get("timestamp");
-//		if(StringUtils.isNotBlank(echostr)) {
-//			ResponseUtil.printStringToResponse(echostr, response);
-//			return null;
-//		}
-//		wechat.getAutoreply();
-//		return new Result<>("success");
-//	}
-	
+
 	@RequestMapping("/message")
-	public void message( HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void message(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Map<String, Object> params = new TreeMap<String, Object>();
 		Map<String, String[]> formParams = request.getParameterMap();
-		if(formParams != null && !formParams.isEmpty()) {
-			formParams.forEach((k,v) -> params.put(k, v[0]));
+		if (formParams != null && !formParams.isEmpty()) {
+			formParams.forEach((k, v) -> params.put(k, v[0]));
 			logger.info("Received parameters {}", params);
-			
-			String signature = (String)params.get("signature");
-			String timestamp = (String)params.get("timestamp");
-			String nonce = (String)params.get("nonce");
-			String openid = (String)params.get("openid");
-			
-			
-			
-			String echostr = (String)params.get("echostr");
-			if(StringUtils.isNotBlank(echostr)) {
+
+			String signature = (String) params.get("signature");
+			String timestamp = (String) params.get("timestamp");
+			String nonce = (String) params.get("nonce");
+			String openid = (String) params.get("openid");
+
+			String echostr = (String) params.get("echostr");
+			if (StringUtils.isNotBlank(echostr)) {
 				ResponseUtil.printStringToResponse(echostr, response);
-				return ;
+				return;
 			}
 		}
-		
-		if(request.getReader().ready()){
-			try(BufferedReader reader = request.getReader();){
-				reader.lines().forEach(str -> System.out.println(str));
+
+		try (InputStream is = request.getInputStream();) {
+			if (is.available() > 0) {
+				Message msg = new Message(is);
+
+				logger.info("toUser: {}", msg.getToUser());
+				logger.info("fromUserName: {}", msg.getFromUserName());
+				logger.info("createTime: {}", msg.getCreateTime());
+				logger.info("msgType: {}", msg.getMsgType());
+				logger.info("content: {}", msg.getContent());
+				logger.info("msgId: {}", msg.getMsgId());
 				
+				if(msg.getMsgType().equals("text")) {
+					Message replyMsg = new Message();
+					replyMsg.setToUser(msg.getFromUserName());
+					replyMsg.setFromUserName(msg.getToUser());
+					replyMsg.setMsgType("text");
+					replyMsg.setContent("已收到: "+ msg.getContent());
+					replyMsg.setCreateTime(String.valueOf(new Date().getTime()));
+					ResponseUtil.printStringToResponse(replyMsg, response);
+					return;
+				}else {
+					Wechat.getInstance().getAutoreply();
+				}
 			}
+		} catch (Exception e) {
+			logger.error("Exception occurred.", e);
 		}
-		
-//		wechat.getAutoreply();
+
 		ResponseUtil.printStringToResponse("success", response);
 	}
-	
 
 }

@@ -1,15 +1,14 @@
 package wechatapi;
 
-import com.google.gson.JsonObject;
-import com.spiderclould.entity.AccessToken;
-import com.spiderclould.entity.ConfigEntity;
-import com.spiderclould.entity.Ticket;
-import com.spiderclould.service.Wechat;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONObject;
+import com.spiderclould.entity.AccessToken;
+import com.spiderclould.entity.Ticket;
+import com.spiderclould.service.Wechat;
 
 public class APICommonsTest {
 
@@ -60,10 +59,10 @@ public class APICommonsTest {
     @Test
     public void uploadPicture(){
     	String picPath  = "C:\\Users\\user\\Pictures\\pig.jpg";
-        JsonObject ret = wechatAPI.uploadPicture(picPath);
+        JSONObject ret = wechatAPI.uploadPicture(picPath);
 
         System.out.println(ret);
-        Assert.assertEquals(ret.get("errcode").getAsInt(), 0);
+        Assert.assertEquals(ret.getIntValue("errcode"), 0);
 
     }
 

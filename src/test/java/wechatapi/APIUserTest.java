@@ -1,10 +1,10 @@
 package wechatapi;
 
-import com.google.gson.JsonObject;
-import com.spiderclould.service.Wechat;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.alibaba.fastjson.JSONObject;
+import com.spiderclould.service.Wechat;
 
 public class APIUserTest {
 
@@ -12,14 +12,14 @@ public class APIUserTest {
 
     @Test
     public void getUserTest(){
-        JsonObject userInfo = wechatAPI.getUser("o82bmwPeVADOaz-x6l4seFMUvg0U");
+        JSONObject userInfo = wechatAPI.getUser("o82bmwPeVADOaz-x6l4seFMUvg0U");
 
         System.out.println(userInfo);
 
         Assert.assertNotNull(userInfo);
-        Assert.assertTrue(userInfo.has("nickname"));
-        Assert.assertTrue(userInfo.has("sex"));
-        Assert.assertTrue(userInfo.has("openid"));
+        Assert.assertTrue(userInfo.containsKey("nickname"));
+        Assert.assertTrue(userInfo.containsKey("sex"));
+        Assert.assertTrue(userInfo.containsKey("openid"));
 
     }
 }
