@@ -30,6 +30,7 @@ public class WxApi {
 
 	@RequestMapping("/message")
 	public void message(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		logger.info("Received message: ");
 		Map<String, Object> params = new TreeMap<String, Object>();
 		Map<String, String[]> formParams = request.getParameterMap();
 		if (formParams != null && !formParams.isEmpty()) {
